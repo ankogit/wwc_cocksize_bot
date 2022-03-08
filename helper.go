@@ -1,50 +1,37 @@
 package main
 
 import (
-	"math"
+	"math/rand"
 	"strconv"
+	"time"
 )
 
-// lat/lon to tile numbers
-func tilenumber(lat, lon, zoom float64) (string, string) {
-	n := math.Pow(2, zoom)
-	xstr := strconv.FormatFloat((n*((lon+180)/360) - 1), 'f', 0, 64)
-	n = math.Pow(2, zoom-1)
-	ystr := strconv.FormatFloat((n * (1 - (math.Log(math.Tan(lat*(math.Pi/180))+1/(math.Cos(lat*(math.Pi/180)))) / math.Pi))), 'f', 0, 64)
-	return xstr, ystr
+func getNewCockSize() int {
+	min := 1
+	max := 50
+
+	rand.Seed(time.Now().UnixNano())
+	return rand.Intn(max-min) + min
 }
 
-// haversin(θ) function
-func hsin(theta float64) float64 {
-	return math.Pow(math.Sin(theta/2), 2)
-}
+func getCockSizeMessage(cocksize int) string {
+	emoji := "😭"
 
-// Distance function returns the distance (in meters) between two points of
-//     a given longitude and latitude relatively accurately (using a spherical
-//     approximation of the Earth) through the Haversin Distance Formula for
-//     great arc distance on a sphere with accuracy for small distances
-//
-// point coordinates are supplied in degrees and converted into rad. in the func
-//
-// distance returned is METERS!!!!!!
-// http://en.wikipedia.org/wiki/Haversine_formula
-func Distance(lat1, lon1, lat2, lon2 float64) float64 {
-	// convert to radians
-	// must cast radius as float to multiply later
-	var la1, lo1, la2, lo2, r float64
-	la1 = lat1 * math.Pi / 180
-	lo1 = lon1 * math.Pi / 180
-	la2 = lat2 * math.Pi / 180
-	lo2 = lon2 * math.Pi / 180
+	if cocksize > 1 && cocksize < 5 {
+		emoji = "😰"
+	} else if cocksize >= 5 && cocksize < 10 {
+		emoji = "😥"
+	} else if cocksize >= 10 && cocksize < 15 {
+		emoji = "😓"
+	} else if cocksize >= 15 && cocksize < 20 {
+		emoji = "😏"
+	} else if cocksize >= 20 && cocksize < 30 {
+		emoji = "😏"
+	} else if cocksize >= 30 && cocksize < 40 {
+		emoji = "🤤"
+	} else if cocksize >= 40 && cocksize < 50 {
+		emoji = "🤥"
+	}
 
-	r = 6378100 // Earth radius in METERS
-
-	// calculate
-	h := hsin(la2-la1) + math.Cos(la1)*math.Cos(la2)*hsin(lo2-lo1)
-
-	return 2 * r * math.Asin(math.Sqrt(h))
-}
-
-func Round(f float64) int64 {
-	return int64(math.Floor(f + .5))
+	return "My cock size is " + strconv.Itoa(cocksize) + "cm " + emoji
 }

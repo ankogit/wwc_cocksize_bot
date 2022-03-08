@@ -1,9 +1,8 @@
 package main
 
 import (
-	"log"
-
 	"github.com/go-ini/ini"
+	"log"
 )
 
 type IniConf struct {
