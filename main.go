@@ -9,11 +9,6 @@ import (
 
 const version = "0.0.7"
 
-type UserData struct {
-	cockSize int
-	time     time.Time
-}
-
 func main() {
 	var users = make(map[int64]UserData)
 	var user UserData
