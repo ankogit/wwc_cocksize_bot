@@ -1,17 +1,24 @@
 package main
 
 import (
+	"math"
 	"math/rand"
 	"strconv"
 	"time"
 )
 
 func getNewCockSize() int {
-	min := 1
-	max := 50
-
 	rand.Seed(time.Now().UnixNano())
-	return rand.Intn(max-min) + min
+
+	min := 1
+	m := 50
+	t := (math.Round(math.Abs(test(float64(rand.Intn(m-min)+min), 10))))
+	max := int(t)
+	return rand.Intn(max) + min
+}
+
+func test(x float64, temp float64) float64 {
+	return -0.04*math.Pow(x, 2) + 2*x + temp
 }
 
 func getCockSizeMessage(cocksize int) string {

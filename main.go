@@ -7,11 +7,10 @@ import (
 	"time"
 )
 
-const version = "0.0.7"
+const version = "0.1.7"
 
 func main() {
 	var users = make(map[int64]UserData)
-	var user UserData
 
 	config := new(IniConf)
 	config.CheckAndLoadConf("config" + string(os.PathSeparator) + "config.ini")
@@ -43,6 +42,7 @@ func main() {
 			break
 		// Пришел inline запрос
 		case update.InlineQuery != nil:
+			var user UserData
 
 			if val, ok := users[update.InlineQuery.From.ID]; ok {
 				user = val
@@ -66,12 +66,13 @@ func main() {
 					Title: "🍆 Узнать свой размер",
 					InputMessageContent: tgbotapi.InputTextMessageContent{
 						Text: cockSizeMessage},
-					Description: "Поделится размер штуцера сегодня"})
+					Description: "Размер вашего штуцера сегодня"})
 
 			// Отправляем меню пользователю
 			if _, err := bot.Request(tgbotapi.InlineConfig{
 				InlineQueryID: update.InlineQuery.ID,
 				CacheTime:     0,
+				IsPersonal:    true,
 				Results:       resources}); err != nil {
 				log.Println(err)
 			}
