@@ -3,6 +3,7 @@ package main
 import (
 	"math"
 	"math/rand"
+	"sort"
 	"strconv"
 	"time"
 )
@@ -18,6 +19,8 @@ func getNewCockSize() int {
 }
 
 func test(x float64, temp float64) float64 {
+	//return 300 / (6 + 0.4*math.Pow((x-15), 2)) //сред 10
+	//return 12 / (0.5 + 5*math.Pow((x-15), 2)) //сред 0
 	return -0.04*math.Pow(x, 2) + 2*x + temp
 }
 
@@ -41,4 +44,12 @@ func getCockSizeMessage(cocksize int) string {
 	}
 
 	return "My cock size is " + strconv.Itoa(cocksize) + "cm " + emoji
+}
+
+func CalcMedian(numbers []float64) float64 {
+	sort.Float64s(numbers) // sort the numbers
+
+	mNumber := len(numbers) / 2
+
+	return numbers[mNumber]
 }
