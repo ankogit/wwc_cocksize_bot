@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-const version = "0.1.7"
+const version = "0.2.1"
 
 func main() {
 	var users = make(map[int64]UserData)
@@ -47,12 +47,12 @@ func main() {
 			if val, ok := users[update.InlineQuery.From.ID]; ok {
 				user = val
 
-				if user.time.Add(time.Hour * 24).Before(time.Now()) {
-					user.cockSize = getNewCockSize()
+				if user.time.Add(time.Hour * 8).Before(time.Now()) {
+					user.cockSize = getNewCockSizeV2(update.InlineQuery.From.ID)
 					user.time = time.Now()
 				}
 			} else {
-				user = UserData{getNewCockSize(), time.Now()}
+				user = UserData{getNewCockSizeV2(update.InlineQuery.From.ID), time.Now()}
 				users[update.InlineQuery.From.ID] = user
 			}
 

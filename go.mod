@@ -5,11 +5,12 @@ go 1.17
 require (
 	github.com/go-ini/ini v1.66.4
 	github.com/go-telegram-bot-api/telegram-bot-api/v5 v5.5.1
+	github.com/m7shapan/njson v1.0.7
 )
 
 require (
 	github.com/stretchr/testify v1.7.0 // indirect
-	golang.org/x/exp v0.0.0-20220307200941-a1099baf94bf // indirect
-	golang.org/x/tools v0.1.9 // indirect
-	gonum.org/v1/gonum v0.9.3 // indirect
+	github.com/tidwall/gjson v1.12.1 // indirect
+	github.com/tidwall/match v1.1.1 // indirect
+	github.com/tidwall/pretty v1.2.0 // indirect
 )
