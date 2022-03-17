@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/m7shapan/njson"
 	"io/ioutil"
 	"math"
@@ -43,8 +44,10 @@ func getNewCockSizeV2(userId int64) int {
 	}
 
 	curWeather := getWeather()
-	temperature := float64(curWeather.Temperature.MinTemperature)
+	fmt.Println(curWeather)
 
+	temperature := float64(curWeather.Temperature.TemperatureFeelsLike)
+	fmt.Println(temperature)
 	temperature += 16
 	temperature = temperature / 15
 
@@ -97,13 +100,16 @@ func CalcMedian(numbers []float64) float64 {
 }
 
 func getWeather() WeatherResponse {
-	response, err := http.Get("https://api.openweathermap.org/data/2.5/weather?lat47.212146&lon=39.645473&appid=640223ddbac7daef5f52bdbf45de272b&units=metric")
+	response, err := http.Get("https://api.openweathermap.org/data/2.5/weather?lat=47.212555&lon=38.925119&appid=640223ddbac7daef5f52bdbf45de272b&units=metric")
 	if err != nil {
+		fmt.Println(err)
 	}
 	//fmt.Println(response.Body)
 
 	body, err := ioutil.ReadAll(response.Body)
-
+	if err != nil {
+		fmt.Println(err)
+	}
 	//fmt.Println(string(body))
 
 	var weatherResponse WeatherResponse
