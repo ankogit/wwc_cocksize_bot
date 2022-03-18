@@ -12,7 +12,7 @@ WORKDIR /app
 
 
 # Соберём приложение
-RUN go build -o main .
+RUN go build -o main ./cmd
 
 # Запустим приложение
 CMD ["/app/main"]

@@ -1,14 +1,6 @@
-package main
+package models
 
-import (
-	"fmt"
-	"time"
-)
-
-type UserData struct {
-	cockSize int
-	time     time.Time
-}
+import "fmt"
 
 type WeatherResponse struct {
 	Location    Location `json:"coord"`

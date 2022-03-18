@@ -1,0 +1,3 @@
+telegramkey = key
+debug = false
+dbName = bot.db

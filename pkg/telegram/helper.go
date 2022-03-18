@@ -1,9 +1,10 @@
-package main
+package telegram
 
 import (
 	"fmt"
 	"github.com/m7shapan/njson"
 	"io/ioutil"
+	"local/wwc_cocksize_bot/pkg/models"
 	"math"
 	"math/rand"
 	"net/http"
@@ -99,7 +100,7 @@ func CalcMedian(numbers []float64) float64 {
 	return numbers[mNumber]
 }
 
-func getWeather() WeatherResponse {
+func getWeather() models.WeatherResponse {
 	response, err := http.Get("https://api.openweathermap.org/data/2.5/weather?lat=47.212555&lon=38.925119&appid=640223ddbac7daef5f52bdbf45de272b&units=metric")
 	if err != nil {
 		fmt.Println(err)
@@ -112,7 +113,7 @@ func getWeather() WeatherResponse {
 	}
 	//fmt.Println(string(body))
 
-	var weatherResponse WeatherResponse
+	var weatherResponse models.WeatherResponse
 	err = njson.Unmarshal(body, &weatherResponse)
 
 	//var weatherResponse2 WeatherResponse

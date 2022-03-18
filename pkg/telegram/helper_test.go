@@ -1,9 +1,10 @@
-package main
+package telegram
 
 import (
 	"fmt"
 	"github.com/m7shapan/njson"
 	"io/ioutil"
+	"local/wwc_cocksize_bot/pkg/models"
 	"math"
 	"math/rand"
 	"net/http"
@@ -32,7 +33,7 @@ func TestGetWeather(t *testing.T) {
 
 	fmt.Println(string(body))
 
-	var weatherResponse WeatherResponse
+	var weatherResponse models.WeatherResponse
 	err = njson.Unmarshal(body, &weatherResponse)
 
 	//var weatherResponse2 WeatherResponse
