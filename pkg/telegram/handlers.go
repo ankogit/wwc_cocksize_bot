@@ -84,17 +84,26 @@ func (b *Bot) handleCommandStats(message *tgbotapi.Message) error {
 			return users[i].CockSize > users[j].CockSize
 		})
 
-		for _, user := range users {
-			usersInfo = append(usersInfo, fmt.Sprintf("%v %v : %vcm", emojiBySize(user.CockSize), user.Username, user.CockSize))
+		for i, user := range users {
+			username := user.Username
+			if len(username) == 0 {
+				username = "Anonymous"
+			}
+			msg := fmt.Sprintf("%v [%v](tg://user?id=%v) : *%v cm*", emojiBySize(user.CockSize), user.Username, user.ID, user.CockSize)
+			if i == 0 {
+				msg += " 👑"
+			}
+			usersInfo = append(usersInfo, msg)
 		}
 	}
 
 	if len(usersInfo) > 0 {
-		textMessage = fmt.Sprintf("Stats for %v \n", time.Now().Format("02.01.2006 - 3:4 pm")) + strings.Join(usersInfo, "\n")
+		textMessage = fmt.Sprintf("Stats for %v \n", time.Now().Format("02.01.2006")) + strings.Join(usersInfo, "\n")
 	} else {
 		textMessage = b.messages.NoStats
 	}
 	msg := tgbotapi.NewMessage(message.Chat.ID, textMessage)
+	msg.ParseMode = "MARKDOWN"
 	b.bot.Send(msg)
 
 	return nil
