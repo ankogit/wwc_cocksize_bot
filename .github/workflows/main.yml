@@ -1,0 +1,150 @@
+# name: CI-prod
+
+# on:
+#   push:
+#     branches:
+#       - main
+
+# # env:
+# #   REGISTRY: "registry.digitalocean.com/sandbox-registry"
+# #   API_IMAGE: "courses-backend"
+# #   NGINX_IMAGE: "courses-backend-proxy"
+# #   TAG: "stable"
+# #   TEST_CONTAINER_NAME: "test_db"
+# #   TEST_DB_NAME: "test"
+# #   TEST_DB_URI: "mongodb://localhost:27019"
+# #   APP_ENV: "prod"
+
+# jobs:
+
+# #     tests:
+# #       runs-on: ubuntu-latest
+# #       steps:
+# #         - name: Install Go
+# #           uses: actions/setup-go@v2
+# #           with:
+# #             go-version: 1.17
+
+# #         - name: Checkout code
+# #           uses: actions/checkout@v2
+
+# #         - name: Unit Tests
+# #           run: go test --short ./...
+
+# #         - name: Create test db container
+# #           run: docker run --rm -d -p 27019:27017 --name $(echo $TEST_CONTAINER_NAME) -e MONGODB_DATABASE=$(echo $TEST_DB_NAME) mongo:4.4-bionic
+
+# #         - name: Integration Tests
+# #           run: GIN_MODE=release go test -v ./tests/
+
+# #         - name: Kill test db container
+# #           run: docker stop $(echo $TEST_CONTAINER_NAME)
+
+# #     build_and_push:
+# #       runs-on: ubuntu-latest
+# # #       needs: tests
+
+# #       steps:
+# #         - name: Checkout code
+# #           uses: actions/checkout@v2
+
+# #         - name: Build API container image
+# #           run: docker build -f deploy/Dockerfile -t $(echo $REGISTRY)/$(echo $API_IMAGE):$(echo $TAG) .
+# #         - name: Build NGINX container image
+# #           run: docker build -f deploy/nginx/Dockerfile -t $(echo $REGISTRY)/$(echo $NGINX_IMAGE):$(echo $TAG) .
+
+# #         - name: Install doctl
+# #           uses: digitalocean/action-doctl@v2
+# #           with:
+# #             token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+# #         - name: Log in to DigitalOcean Container Registry with short-lived credentials
+# #           run: doctl registry login --expiry-seconds 600
+
+# #         - name: Push API image to DigitalOcean Container Registry
+# #           run: docker push $(echo $REGISTRY)/$(echo $API_IMAGE):$(echo $TAG)
+
+# #         - name: Push NGINX image to DigitalOcean Container Registry
+# #           run: docker push $(echo $REGISTRY)/$(echo $NGINX_IMAGE):$(echo $TAG)
+
+#     deploy:
+#       environment: production
+#       runs-on: ubuntu-latest
+# #       needs: build_and_push
+
+#       steps:
+#         - uses: actions/checkout@master
+#         - name: copy file via ssh password
+#           uses: appleboy/scp-action@master
+#           with:
+#             host: ${{ secrets.HOST }}
+#             username: ${{ secrets.USERNAME }}
+#             key: ${{ secrets.SSHKEY }}
+#             source: "deploy/,!deploy/nginx,!deploy/Dockerfile"
+#             target: "api"
+#             strip_components: 1
+
+#         - name: Deploy to Digital Ocean droplet via SSH action
+#           uses: appleboy/ssh-action@v0.1.3
+#           env:
+#             SERVER_NAME: "api-prod.creatly.me"
+#           with:
+#             host: ${{ secrets.HOST }}
+#             username: ${{ secrets.USERNAME }}
+#             key: ${{ secrets.SSHKEY }}
+#             envs: API_IMAGE,NGINX_IMAGE,TAG,REGISTRY,SERVER_NAME,APP_ENV
+#             script: |
+#               # Set env variables
+#               export MONGO_URI="${{ secrets.MONGO_URI }}"
+#               export MONGO_USER="${{ secrets.MONGO_USER }}"
+#               export MONGO_PASS="${{ secrets.MONGO_PASS }}"
+#               export PASSWORD_SALT="${{ secrets.PASSWORD_SALT }}"
+#               export JWT_SIGNING_KEY="${{ secrets.JWT_SIGNING_KEY }}"
+#               export SENDPULSE_LISTID="${{ secrets.SENDPULSE_LISTID }}"
+#               export SENDPULSE_ID="${{ secrets.SENDPULSE_ID }}"
+#               export SENDPULSE_SECRET="${{ secrets.SENDPULSE_SECRET }}"
+#               export HTTP_HOST="${{secrets.HTTP_HOST}}"
+#               export FONDY_MERCHANT_ID=${{secrets.FONDY_MERCHANT_ID}}
+#               export FONDY_MERCHANT_PASS=${{secrets.FONDY_MERCHANT_PASS}}
+#               export PAYMENT_CALLBACK_URL=${{secrets.PAYMENT_CALLBACK_URL}}
+#               export PAYMENT_REDIRECT_URL=${{secrets.PAYMENT_REDIRECT_URL}}
+#               export FRONTEND_URL=${{secrets.FRONTEND_URL}}
+#               export SMTP_PASSWORD=${{secrets.SMTP_PASSWORD}}
+#               export SERVER_NAME=$(echo $SERVER_NAME)
+#               export REGISTRY=$(echo $REGISTRY)
+#               export API_IMAGE=$(echo $API_IMAGE)
+#               export NGINX_IMAGE=$(echo $NGINX_IMAGE)
+#               export TAG=$(echo $TAG)
+#               export APP_ENV=$(echo $APP_ENV)
+#               export STORAGE_ENDPOINT=${{secrets.STORAGE_ENDPOINT}}
+#               export STORAGE_BUCKET=${{secrets.STORAGE_BUCKET}}
+#               export STORAGE_ACCESS_KEY=${{secrets.STORAGE_ACCESS_KEY}}
+#               export STORAGE_SECRET_KEY="${{secrets.STORAGE_SECRET_KEY}}"
+#               export CLOUDFLARE_API_KEY=${{secrets.CLOUDFLARE_API_KEY}}
+#               export CLOUDFLARE_EMAIL=${{secrets.CLOUDFLARE_EMAIL}}
+#               export CLOUDFLARE_ZONE_EMAIL=${{secrets.CLOUDFLARE_ZONE_EMAIL}}
+#               export CLOUDFLARE_CNAME_TARGET=${{secrets.CLOUDFLARE_CNAME_TARGET}}
+#               # Login into Digital Ocean Registry
+#               docker login -u ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} $(echo $REGISTRY)
+#               # Run a new container from a new image
+#               cd api
+#               docker-compose stop
+#               docker-compose rm -f
+#               docker-compose pull
+#               docker-compose up -d --force-recreate nginx
+
+
+name: docker-compose-actions-workflow
+on:
+  push:
+    branches:
+      - main
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build the stack
+        run: docker-compose up -d
+#       - name: Test
+#         run: docker run --network container:webapp-frontend appropriate/curl -s --retry 10 --retry-connrefused http://localhost:5000/
