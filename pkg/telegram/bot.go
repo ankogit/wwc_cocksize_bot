@@ -40,7 +40,7 @@ func (b *Bot) handleUpdates(updates tgbotapi.UpdatesChannel) {
 	for update := range updates {
 		switch {
 		// Пришло обычное сообщение
-		case update.Message != nil && update.Message.ViaBot == nil && !update.Message.IsCommand():
+		case update.Message != nil && update.Message.ViaBot == nil && !update.Message.IsCommand() && update.Message.ReplyToMessage == nil:
 			b.sendWelcomeMessage(update.Message)
 			break
 
