@@ -159,7 +159,7 @@ jobs:
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.SSHKEY }}
+          key: ${{ secrets.SSHKEYPUB }}
           script: |
             cd /var/www/telegram/test/wwc_cocksize_bot/
             docker-compose down
