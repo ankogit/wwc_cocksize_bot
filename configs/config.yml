@@ -1,0 +1,9 @@
+version: "0.4.1"
+
+messages:
+  responses:
+    inline_content_title: "🍆 Узнать свой размер"
+    inline_content_description: "Размер вашего штуцера сегодня"
+    no_stats: "Пусто"
+  errors:
+    unknown_command: "Команда не найдена 😳😳😳"

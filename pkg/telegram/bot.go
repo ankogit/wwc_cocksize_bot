@@ -1,10 +1,11 @@
 package telegram
 
 import (
+	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-	"local/wwc_cocksize_bot/config"
+	"local/wwc_cocksize_bot/configs"
 	"local/wwc_cocksize_bot/pkg/models"
-	"local/wwc_cocksize_bot/pkg/repositories"
+	"local/wwc_cocksize_bot/pkg/storage"
 	"log"
 )
 
@@ -12,12 +13,13 @@ type Bot struct {
 	bot            *tgbotapi.BotAPI
 	config         *config.IniConf
 	version        string
+	messages       config.Messages
 	users          map[int64]models.UserData
-	userRepository repositories.UserRepository
+	userRepository storage.UserRepository
 }
 
-func NewBot(bot *tgbotapi.BotAPI, con *config.IniConf, version string, userRepository repositories.UserRepository) *Bot {
-	return &Bot{bot: bot, config: con, version: version, users: make(map[int64]models.UserData), userRepository: userRepository}
+func NewBot(bot *tgbotapi.BotAPI, con *config.IniConf, version string, messages config.Messages, userRepository storage.UserRepository) *Bot {
+	return &Bot{bot: bot, config: con, version: version, messages: messages, users: make(map[int64]models.UserData), userRepository: userRepository}
 }
 
 func (b *Bot) Start() error {
@@ -39,10 +41,19 @@ func (b *Bot) handleUpdates(updates tgbotapi.UpdatesChannel) {
 	for update := range updates {
 		switch {
 		// Пришло обычное сообщение
-		case update.Message != nil:
-			msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Hi!\n\nI'm inline bot for share your cocksize, type @"+b.bot.Self.UserName+" in message field. \nv. "+b.version+"")
-			b.bot.Send(msg)
+		case update.Message != nil && update.Message.ViaBot == nil && !update.Message.IsCommand():
+			b.sendWelcomeMessage(update.Message)
 			break
+
+		case update.Message != nil && update.Message.IsCommand():
+			fmt.Println("IsCommand")
+			fmt.Println(update.Message.Command())
+			if err := b.handleCommand(update.Message); err != nil {
+				b.handleError(update.Message.Chat.ID, err)
+			}
+
+			break
+
 		// Пришел inline запрос
 		case update.InlineQuery != nil:
 			b.handleInlineQuery(update.InlineQuery)

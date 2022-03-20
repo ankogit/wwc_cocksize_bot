@@ -1,3 +1,5 @@
 .idea
 .DS_Store
-config/config.ini
+configs/config.ini
+.env
+*.db

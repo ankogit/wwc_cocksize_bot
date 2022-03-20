@@ -25,3 +25,12 @@ func (r *UserRepository) Get(userId int64) (models.UserData, error) {
 	}
 	return user, nil
 }
+
+func (r *UserRepository) All() ([]models.UserData, error) {
+	var users []models.UserData
+	err := r.db.All(&users)
+	if err != nil {
+		return users, err
+	}
+	return users, nil
+}
