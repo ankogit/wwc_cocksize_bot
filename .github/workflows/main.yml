@@ -160,4 +160,8 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
-          script: whoami
+          script: |
+            cd /var/www/telegram/test/wwc_cocksize_bot/
+            git pull
+            docker-compose down
+            docker-compose up -d --build
