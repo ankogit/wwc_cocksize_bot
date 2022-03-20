@@ -1,7 +1,6 @@
 package telegram
 
 import (
-	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"local/wwc_cocksize_bot/configs"
 	"local/wwc_cocksize_bot/pkg/models"
@@ -46,8 +45,6 @@ func (b *Bot) handleUpdates(updates tgbotapi.UpdatesChannel) {
 			break
 
 		case update.Message != nil && update.Message.IsCommand():
-			fmt.Println("IsCommand")
-			fmt.Println(update.Message.Command())
 			if err := b.handleCommand(update.Message); err != nil {
 				b.handleError(update.Message.Chat.ID, err)
 			}
