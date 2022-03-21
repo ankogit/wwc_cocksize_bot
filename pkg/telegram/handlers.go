@@ -58,6 +58,9 @@ func (b *Bot) handleInlineQuery(query *tgbotapi.InlineQuery) {
 
 func (b *Bot) handleCommand(message *tgbotapi.Message) error {
 	switch message.Command() {
+	case "start":
+		b.sendWelcomeMessage(message)
+		return nil
 	case "stats":
 		if err := b.handleCommandStats(message); err != nil {
 			return err
