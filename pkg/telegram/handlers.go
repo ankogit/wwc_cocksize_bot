@@ -104,6 +104,7 @@ func (b *Bot) handleCommandStats(message *tgbotapi.Message) error {
 	}
 	msg := tgbotapi.NewMessage(message.Chat.ID, textMessage)
 	msg.ParseMode = "MARKDOWN"
+	msg.DisableNotification = true
 	b.bot.Send(msg)
 
 	return nil
