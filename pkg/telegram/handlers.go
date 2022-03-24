@@ -5,6 +5,7 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"local/wwc_cocksize_bot/pkg/models"
 	"log"
+	"regexp"
 	"sort"
 	"strings"
 	"time"
@@ -59,10 +60,20 @@ func (b *Bot) handleInlineQuery(query *tgbotapi.InlineQuery) {
 func (b *Bot) handleCommand(message *tgbotapi.Message) error {
 	switch message.Command() {
 	case "start":
-		b.sendWelcomeMessage(message)
+		b.SendWelcomeMessage(message.Chat.ID)
 		return nil
 	case "stats":
-		if err := b.handleCommandStats(message); err != nil {
+		if err := b.handleCommandStats(message.Chat.ID); err != nil {
+			return err
+		}
+		return nil
+	case "notifications__enable":
+		if err := b.handleNotificationEnable(message); err != nil {
+			return err
+		}
+		return nil
+	case "notifications__disable":
+		if err := b.handleNotificationDisable(message); err != nil {
 			return err
 		}
 		return nil
@@ -71,12 +82,11 @@ func (b *Bot) handleCommand(message *tgbotapi.Message) error {
 	}
 }
 
-func (b *Bot) sendWelcomeMessage(message *tgbotapi.Message) {
-	msg := tgbotapi.NewMessage(message.Chat.ID, "Hi!\n\nI'm inline bot for share your cocksize, type @"+b.bot.Self.UserName+" in message field. \nv. "+b.version+"")
+func (b *Bot) SendWelcomeMessage(chatId int64) {
+	msg := tgbotapi.NewMessage(chatId, "Hi!\n\nI'm inline bot for share your cocksize, type @"+b.bot.Self.UserName+" in message field. \nv. "+b.version+"")
 	b.bot.Send(msg)
 }
-
-func (b *Bot) handleCommandStats(message *tgbotapi.Message) error {
+func (b *Bot) SendStatsMessage(chatId int64) error {
 	var usersInfo []string
 	var textMessage string
 	if users, err := b.userRepository.All(); users != nil {
@@ -105,10 +115,79 @@ func (b *Bot) handleCommandStats(message *tgbotapi.Message) error {
 	} else {
 		textMessage = b.messages.NoStats
 	}
-	msg := tgbotapi.NewMessage(message.Chat.ID, textMessage)
+	msg := tgbotapi.NewMessage(chatId, textMessage)
 	msg.ParseMode = "MARKDOWN"
 	msg.DisableNotification = true
 	b.bot.Send(msg)
+	return nil
+}
 
+func (b *Bot) handleCommandStats(chatId int64) error {
+	return b.SendStatsMessage(chatId)
+}
+func (b *Bot) handleNotificationEnable(message *tgbotapi.Message) error {
+	if message.Chat == nil || message.Chat.Title == "" {
+		msg := tgbotapi.NewMessage(message.Chat.ID, "Notifications are allowed to conduct group chats")
+		b.bot.Send(msg)
+		return nil
+	}
+	lenCommand := len("notifications__enable")
+	cronParam := message.Text[lenCommand+2:]
+
+	var validID = regexp.MustCompile(`(@(annually|yearly|monthly|weekly|daily|hourly|reboot))|(@every (\d+(ns|us|µs|ms|s|m|h))+)|((((\d+,)+\d+|(\d+(\/|-)\d+)|\d+|\*) ?){5,7})`)
+	if !validID.MatchString(cronParam) {
+		msg := tgbotapi.NewMessage(message.Chat.ID, "Cron string is not correct :(")
+		b.bot.Send(msg)
+		return nil
+	}
+
+	var chat = models.Chat{
+		ID:               message.Chat.ID,
+		Title:            message.Chat.Title,
+		NotificationCron: cronParam,
+		EntryId:          0,
+	}
+	if err := b.chatRepository.Save(chat); err != nil {
+		return err
+	}
+
+	entryId, err := b.cronService.SetJob(&chat, cronParam)
+	if err != nil {
+		return err
+	}
+	chat.EntryId = entryId
+
+	if err := b.chatRepository.Save(chat); err != nil {
+		return err
+	}
+	msg := tgbotapi.NewMessage(message.Chat.ID, "Notifications are installed for this chat 🔔")
+	b.bot.Send(msg)
+	return nil
+}
+
+func (b *Bot) handleNotificationDisable(message *tgbotapi.Message) error {
+	if message.Chat == nil || message.Chat.Title == "" {
+		msg := tgbotapi.NewMessage(message.Chat.ID, "Notifications are allowed to conduct group chats")
+		b.bot.Send(msg)
+		return nil
+	}
+
+	chat, _ := b.chatRepository.Get(message.Chat.ID)
+
+	if (chat == (models.Chat{})) || (chat.NotificationCron == "" && chat.EntryId == 0) {
+		msg := tgbotapi.NewMessage(message.Chat.ID, "Notifications are not already setting for this chat")
+		b.bot.Send(msg)
+		return nil
+	}
+
+	b.cronService.RemoveJob(&chat)
+	chat.NotificationCron = ""
+	chat.EntryId = 0
+
+	if err := b.chatRepository.Save(chat); err != nil {
+		return err
+	}
+	msg := tgbotapi.NewMessage(message.Chat.ID, "Notifications are disabled for this chat 🔕")
+	b.bot.Send(msg)
 	return nil
 }

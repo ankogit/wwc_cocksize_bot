@@ -24,8 +24,11 @@ func getNewCockSize() int {
 }
 
 func getNewCockSizeV2(userId int64) int {
-	userIdBytes := []byte(strconv.FormatInt(userId, 10))
-	intDefaultCockSize, _ := strconv.Atoi(string(userIdBytes[len(userIdBytes)-2:]))
+	//userIdBytes := []byte(strconv.FormatInt(userId, 10))
+	//intDefaultCockSize, _ := strconv.Atoi(string(userIdBytes[len(userIdBytes)-2:]))
+	rand.Seed(time.Now().UnixNano())
+	intDefaultCockSize := rand.Intn(20-10) + 10
+
 	defaultCockSize := float64(intDefaultCockSize)
 	maxSize := float64(20)
 
@@ -45,10 +48,10 @@ func getNewCockSizeV2(userId int64) int {
 	}
 
 	curWeather := getWeather()
-	fmt.Println(curWeather)
+	//fmt.Println(curWeather)
 
 	temperature := float64(curWeather.Temperature.TemperatureFeelsLike)
-	fmt.Println(temperature)
+	//fmt.Println(temperature)
 	temperature += 16
 	temperature = temperature / 15
 
@@ -103,8 +106,10 @@ func emojiBySize(cocksize int) string {
 		emoji = "😓"
 	} else if cocksize >= 15 && cocksize < 20 {
 		emoji = "😏"
-	} else if cocksize >= 20 && cocksize < 30 {
+	} else if cocksize >= 20 && cocksize < 25 {
 		emoji = "😏"
+	} else if cocksize >= 25 && cocksize < 30 {
+		emoji = "🤩"
 	} else if cocksize >= 30 && cocksize < 40 {
 		emoji = "🤤"
 	} else if cocksize >= 40 && cocksize < 50 {

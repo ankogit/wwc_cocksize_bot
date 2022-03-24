@@ -60,6 +60,8 @@ func TestTestGen(t *testing.T) {
 }
 
 func TestGetNewCockSizeV2(t *testing.T) {
+
+	//fmt.Println()
 	fmt.Println(getNewCockSizeV2(439782918))
 
 	//for i := 10; i < 20; i++ {

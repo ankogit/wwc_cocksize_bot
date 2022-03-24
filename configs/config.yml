@@ -1,4 +1,6 @@
-version: "0.4.6"
+version: "0.5.2"
+
+port: 2222
 
 messages:
   responses:

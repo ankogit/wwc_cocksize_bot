@@ -9,4 +9,5 @@ type UserData struct {
 	LastName  string
 	CockSize  int
 	Time      time.Time
+	//ChatID    int64
 }
