@@ -131,8 +131,13 @@ func (b *Bot) handleNotificationEnable(message *tgbotapi.Message) error {
 		b.bot.Send(msg)
 		return nil
 	}
-	lenCommand := len("notifications__enable")
-	cronParam := message.Text[lenCommand+2:]
+	cParts := strings.SplitAfterN(message.Text, " ", 2)
+	if len(cParts) == 1 {
+		msg := tgbotapi.NewMessage(message.Chat.ID, "To set notification you need to pass the cron param")
+		b.bot.Send(msg)
+		return nil
+	}
+	cronParam := cParts[1]
 
 	var validID = regexp.MustCompile(`(@(annually|yearly|monthly|weekly|daily|hourly|reboot))|(@every (\d+(ns|us|µs|ms|s|m|h))+)|((((\d+,)+\d+|(\d+(\/|-)\d+)|\d+|\*) ?){5,7})`)
 	if !validID.MatchString(cronParam) {
