@@ -55,7 +55,7 @@ func (b *Bot) handleUpdates(updates tgbotapi.UpdatesChannel) {
 	for update := range updates {
 		switch {
 		// Пришло обычное сообщение
-		case update.Message != nil && update.Message.ViaBot == nil && !update.Message.IsCommand() && update.Message.ReplyToMessage == nil:
+		case update.Message != nil && update.Message.ViaBot == nil && !update.Message.IsCommand() && update.Message.ReplyToMessage == nil && update.Message.Chat.Type == "private":
 			b.SendWelcomeMessage(update.Message.Chat.ID)
 			break
 
