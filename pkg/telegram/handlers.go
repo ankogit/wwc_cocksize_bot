@@ -102,7 +102,7 @@ func (b *Bot) SendStatsMessage(chatId int64) error {
 			if len(username) == 0 {
 				username = "Anonymous"
 			}
-			msg := fmt.Sprintf("%v [%v](tg://user?id=%v) : *%v cm*", emojiBySize(3), username, user.ID, user.CockSize)
+			msg := fmt.Sprintf("%v [%v](tg://user?id=%v) : *%v cm*", emojiBySize(user.CockSize), username, user.ID, user.CockSize)
 			if i == 0 {
 				msg += " 👑"
 			}
