@@ -99,20 +99,40 @@ func emojiBySize(cocksize int) string {
 	emoji := "😭"
 
 	if cocksize > 1 && cocksize < 5 {
-		emoji = "😰"
-	} else if cocksize >= 5 && cocksize < 10 {
+		emoji = "\U0001F976"
+	} else if cocksize >= 5 && cocksize < 6 {
 		emoji = "😥"
-	} else if cocksize >= 10 && cocksize < 15 {
+	} else if cocksize >= 6 && cocksize < 7 {
+		emoji = "😰"
+	} else if cocksize >= 7 && cocksize < 8 {
+		emoji = "\U0001F90F"
+	} else if cocksize >= 8 && cocksize < 9 {
+		emoji = "😩"
+	} else if cocksize >= 10 && cocksize < 13 {
 		emoji = "😓"
-	} else if cocksize >= 15 && cocksize < 20 {
+	} else if cocksize >= 13 && cocksize < 15 {
+		emoji = "\U0001F972"
+	} else if cocksize >= 15 && cocksize < 17 {
+		emoji = "😋"
+	} else if cocksize >= 17 && cocksize < 19 {
+		emoji = "🤗"
+	} else if cocksize >= 19 && cocksize < 21 {
+		emoji = "😍"
+	} else if cocksize >= 21 && cocksize < 25 {
 		emoji = "😏"
-	} else if cocksize >= 20 && cocksize < 25 {
-		emoji = "😏"
-	} else if cocksize >= 25 && cocksize < 30 {
+	} else if cocksize >= 25 && cocksize < 27 {
 		emoji = "🤩"
-	} else if cocksize >= 30 && cocksize < 40 {
+	} else if cocksize >= 27 && cocksize < 30 {
+		emoji = "😳"
+	} else if cocksize >= 30 && cocksize < 35 {
+		emoji = "😲"
+	} else if cocksize >= 35 && cocksize < 36 {
+		emoji = "👳🏾‍"
+	} else if cocksize >= 36 && cocksize < 40 {
 		emoji = "🤤"
-	} else if cocksize >= 40 && cocksize < 50 {
+	} else if cocksize >= 40 && cocksize < 45 {
+		emoji = "🤡"
+	} else if cocksize >= 45 && cocksize < 50 {
 		emoji = "🤥"
 	}
 
