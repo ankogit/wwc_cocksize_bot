@@ -51,16 +51,15 @@ func getNewCockSizeV2(userId int64) int {
 	//fmt.Println(curWeather)
 
 	temperature := float64(curWeather.Temperature.TemperatureFeelsLike)
-	//fmt.Println(temperature)
-	temperature += 16
-	temperature = temperature / 15
+	temperature += 15
+	temperature = temperature / 20
 
 	ratio := ((temperature * math.Log(math.Abs(temperature))) + 0.2) * 2
 
 	val := ratio * defaultCockSize
 
 	result := int(math.Round(val))
-	if val > 40 || val < 3 {
+	if val > 45 || val < 3 {
 		result = getNewCockSize()
 	}
 
@@ -74,25 +73,7 @@ func test(x float64, temp float64) float64 {
 }
 
 func getCockSizeMessage(cocksize int) string {
-	emoji := "😭"
-
-	if cocksize > 1 && cocksize < 5 {
-		emoji = "😰"
-	} else if cocksize >= 5 && cocksize < 10 {
-		emoji = "😥"
-	} else if cocksize >= 10 && cocksize < 15 {
-		emoji = "😓"
-	} else if cocksize >= 15 && cocksize < 20 {
-		emoji = "😏"
-	} else if cocksize >= 20 && cocksize < 30 {
-		emoji = "😏"
-	} else if cocksize >= 30 && cocksize < 40 {
-		emoji = "🤤"
-	} else if cocksize >= 40 && cocksize < 50 {
-		emoji = "🤥"
-	}
-
-	return "My cock size is " + strconv.Itoa(cocksize) + "cm " + emoji
+	return "My cock size is " + strconv.Itoa(cocksize) + "cm " + emojiBySize(cocksize)
 }
 
 func emojiBySize(cocksize int) string {
@@ -128,8 +109,10 @@ func emojiBySize(cocksize int) string {
 		emoji = "😲"
 	} else if cocksize >= 35 && cocksize < 36 {
 		emoji = "👳🏾‍"
-	} else if cocksize >= 36 && cocksize < 40 {
+	} else if cocksize >= 36 && cocksize < 38 {
 		emoji = "🤤"
+	} else if cocksize >= 38 && cocksize < 40 {
+		emoji = "😪"
 	} else if cocksize >= 40 && cocksize < 45 {
 		emoji = "🤡"
 	} else if cocksize >= 45 && cocksize < 50 {
