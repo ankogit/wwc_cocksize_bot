@@ -52,7 +52,7 @@ func getNewCockSizeV2(userId int64) int {
 
 	temperature := float64(curWeather.Temperature.TemperatureFeelsLike)
 	temperature += 15
-	temperature = temperature / 20
+	temperature = temperature / 15
 
 	ratio := ((temperature * math.Log(math.Abs(temperature))) + 0.2) * 2
 
