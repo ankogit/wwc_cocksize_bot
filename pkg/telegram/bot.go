@@ -20,10 +20,19 @@ type Bot struct {
 	userRepository storage.UserRepository
 	chatRepository storage.ChatRepository
 	cronService    *service.CronService
+	services       *service.Services
 }
 
-func NewBot(bot *tgbotapi.BotAPI, con *config.IniConf, version string, messages config.Messages, userRepository storage.UserRepository, charRepository storage.ChatRepository) *Bot {
-	return &Bot{bot: bot, config: con, version: version, messages: messages, users: make(map[int64]models.UserData), userRepository: userRepository, chatRepository: charRepository}
+func NewBot(
+	bot *tgbotapi.BotAPI,
+	con *config.IniConf,
+	version string,
+	messages config.Messages,
+	userRepository storage.UserRepository,
+	charRepository storage.ChatRepository,
+	services *service.Services,
+) *Bot {
+	return &Bot{bot: bot, config: con, version: version, messages: messages, users: make(map[int64]models.UserData), userRepository: userRepository, chatRepository: charRepository, services: services}
 }
 
 func (b *Bot) CronInit(scheduler *cron.Cron) {

@@ -1,10 +1,14 @@
-package handler
+package response
 
 import (
 	"github.com/gin-gonic/gin"
 )
 
 type dataResponse struct {
+	Data  interface{} `json:"data"`
+	Count int64       `json:"count"`
+}
+type DataResponse struct {
 	Data  interface{} `json:"data"`
 	Count int64       `json:"count"`
 }
@@ -20,4 +24,12 @@ type response struct {
 func newResponse(c *gin.Context, statusCode int, message string) {
 	//logger.Error(message)
 	c.AbortWithStatusJSON(statusCode, response{message})
+}
+
+func NewResponse(c *gin.Context, statusCode int, message string) {
+	//logger.Error(message)
+	c.AbortWithStatusJSON(statusCode, response{message})
+}
+func JsonResponse(c *gin.Context, message interface{}, statusCode int) {
+	c.JSON(statusCode, message)
 }

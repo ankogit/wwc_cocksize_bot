@@ -8,10 +8,15 @@ import (
 
 type Users interface {
 	Login(ctx context.Context, input LoginInput) (Tokens, error)
+	RefreshToken(ctx context.Context, input RefreshInput) (Tokens, error)
 }
 
 type LoginInput struct {
-	userId int64
+	UserId int64
+}
+
+type RefreshInput struct {
+	Token string
 }
 
 type Tokens struct {
@@ -20,17 +25,21 @@ type Tokens struct {
 }
 
 type Services struct {
-	Users Users
+	Users        Users
+	TokenManager auth.TokenManager
+	Repositories *storage.Repositories
 }
 type Deps struct {
-	UserRepository storage.UserRepository
-	TokenManager   auth.TokenManager
+	Repositories *storage.Repositories
+	TokenManager auth.TokenManager
 }
 
 func NewServices(deps Deps) *Services {
-	usersService := NewUsersService(deps.UserRepository, deps.TokenManager)
+	usersService := NewUsersService(deps.Repositories.Users, deps.TokenManager)
 
 	return &Services{
-		Users: usersService,
+		Users:        usersService,
+		TokenManager: deps.TokenManager,
+		Repositories: deps.Repositories,
 	}
 }

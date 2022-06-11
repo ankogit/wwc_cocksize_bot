@@ -22,7 +22,7 @@ func NewUsersService(r storage.UserRepository, m auth.TokenManager) *UserService
 }
 
 func (s *UserService) Login(ctx context.Context, input LoginInput) (Tokens, error) {
-	user, err := s.UserRepository.Get(input.userId)
+	user, err := s.UserRepository.Get(input.UserId)
 	if err != nil {
 		return Tokens{}, err
 	}
@@ -33,6 +33,19 @@ func (s *UserService) Login(ctx context.Context, input LoginInput) (Tokens, erro
 	}
 
 	return tokens, nil
+}
+func (s *UserService) RefreshToken(ctx context.Context, input RefreshInput) (Tokens, error) {
+	//user, err := s.UserRepository.Get(input.UserId)
+	//if err != nil {
+	//	return Tokens{}, err
+	//}
+	//
+	//tokens, err := s.createTokens(ctx, user)
+	//if err != nil {
+	//	return Tokens{}, err
+	//}
+
+	return Tokens{}, nil
 }
 
 func (s *UserService) createTokens(ctx context.Context, user models.UserData) (token Tokens, err error) {

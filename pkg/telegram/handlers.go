@@ -1,9 +1,11 @@
 package telegram
 
 import (
+	"context"
 	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"local/wwc_cocksize_bot/pkg/models"
+	"local/wwc_cocksize_bot/pkg/service"
 	"log"
 	"regexp"
 	"sort"
@@ -74,6 +76,11 @@ func (b *Bot) handleCommand(message *tgbotapi.Message) error {
 		return nil
 	case "notifications__disable":
 		if err := b.handleNotificationDisable(message); err != nil {
+			return err
+		}
+		return nil
+	case "get_auth_token":
+		if err := b.handleGetToken(message); err != nil {
 			return err
 		}
 		return nil
@@ -193,6 +200,20 @@ func (b *Bot) handleNotificationDisable(message *tgbotapi.Message) error {
 		return err
 	}
 	msg := tgbotapi.NewMessage(message.Chat.ID, "Notifications are disabled for this chat 🔕")
+	b.bot.Send(msg)
+	return nil
+}
+
+func (b *Bot) handleGetToken(message *tgbotapi.Message) error {
+	res, err := b.services.Users.Login(context.Background(), service.LoginInput{
+		UserId: message.From.ID,
+	})
+	if err != nil {
+		return err
+	}
+	msg := tgbotapi.NewMessage(message.Chat.ID, fmt.Sprintf("We use API Bearer Autorization to access \nYour access token is: `%v` \nYour refresh token is: `%v`", res.AccessToken, res.RefreshToken))
+	msg.ParseMode = "MARKDOWN"
+
 	b.bot.Send(msg)
 	return nil
 }

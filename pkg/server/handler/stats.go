@@ -2,26 +2,27 @@ package handler
 
 import (
 	"github.com/gin-gonic/gin"
-	"local/wwc_cocksize_bot/pkg/models"
+	"local/wwc_cocksize_bot/pkg/server/handler/response"
 	"net/http"
-	"time"
 )
 
 func (h *Handler) getStats(c *gin.Context) {
-	userStats := models.UserData{
-		ID:        0,
-		Username:  "1",
-		FirstName: "2",
-		LastName:  "3",
-		CockSize:  10,
-		Time:      time.Now(),
-	}
-
-	//if err != nil {
-	//	newResponse(c, http.StatusInternalServerError, err.Error())
-	//
-	//	return
+	//userStats := models.UserData{
+	//	ID:        0,
+	//	Username:  "1",
+	//	FirstName: "2",
+	//	LastName:  "3",
+	//	CockSize:  10,
+	//	Time:      time.Now(),
 	//}
+
+	userStats, err := h.services.Repositories.Users.All()
+
+	if err != nil {
+		response.NewResponse(c, http.StatusInternalServerError, err.Error())
+	
+		return
+	}
 
 	//courses, err := h.services.Admins.GetCourses(c.Request.Context(), school.ID)
 	//if err != nil {
@@ -35,5 +36,5 @@ func (h *Handler) getStats(c *gin.Context) {
 	//	response = courses
 	//}
 
-	c.JSON(http.StatusOK, dataResponse{Data: userStats})
+	c.JSON(http.StatusOK, response.DataResponse{Data: userStats})
 }
