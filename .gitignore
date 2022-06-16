@@ -4,3 +4,4 @@ configs/config.ini
 .env
 *.db
 .bin
+pgdata

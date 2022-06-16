@@ -50,10 +50,11 @@ func (c *IniConf) CheckSection(section string) *ini.Section {
 }
 
 type Config struct {
-	Debug    bool
-	Version  string `mapstructure:"version"`
-	Port     string `mapstructure:"port"`
-	Messages Messages
+	Debug      bool
+	AuthSecret string
+	Version    string `mapstructure:"version"`
+	Port       string `mapstructure:"port"`
+	Messages   Messages
 }
 
 type Messages struct {
@@ -109,6 +110,7 @@ func parseEnv(cfg *Config) error {
 	viper.AutomaticEnv()
 
 	cfg.Debug = viper.GetBool("DEBUG")
+	cfg.AuthSecret = viper.GetString("AUTH_SECRET")
 
 	return nil
 }

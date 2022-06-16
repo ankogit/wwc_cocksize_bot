@@ -1,4 +1,4 @@
-version: '2'
+version: "3.9"
 services:
   gobot:
     build: .
@@ -7,3 +7,73 @@ services:
     volumes:
       - ./bot.db:/app/bot.db
       - /var/data:/var/data
+    depends_on:
+      - db
+    networks:
+      - app-network
+
+  db:
+    image: postgres:13.3
+    environment:
+      POSTGRES_DB: "appDB"
+      POSTGRES_USER: "user"
+      POSTGRES_PASSWORD: "pgpwd4"
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+    healthcheck:
+      test: pg_isready -U user -d appDB
+      #      test: PGPASSWORD='pgpwd4' psql -U user --command='SELECT 1'
+      interval: 1s
+      timeout: 2s
+      retries: 5
+    volumes:
+      - ../2. Init Database:/docker-entrypoint-initdb.d
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "54320:5432"
+    networks:
+      app-network:
+        aliases:
+          - database
+
+
+#  migrate:
+#    container_name: db_migrations
+#    image: migrate/migrate
+#    volumes:
+#      - ./database/migrations:/migrations
+#    depends_on:
+#      - db
+#    links:
+#      - db
+#    networks:
+#      - app-network
+##    command: [ "-path", "/migrations", "-database",  "postgres://user:pgpwd4@database:5432/appDB?sslmode=disable", "up" ]
+##    command: ["-path ./database/migrations -database 'postgres://user:pgpwd4@localhost:5432/appDB?sslmode=disable' up"]
+#    command: ["-path", "/migrations", "-database", "postgresql://user:pgpwd4@db/appDB?sslmode=disable", "up"]
+
+  migrate: &basemigrate
+    profiles: ["tools"]
+    image: migrate/migrate
+    entrypoint: "migrate -database postgresql://user:pgpwd4@db/appDB?sslmode=disable -path /tmp/migrations"
+    command: up
+    links:
+      - db
+    volumes:
+      - ./database/migrations:/tmp/migrations
+    networks:
+      - app-network
+
+  create-migration:
+    <<: *basemigrate
+    entrypoint: migrate create -dir /tmp/migrations -ext sql
+    command: ""
+
+  rollback-migration:
+    <<: *basemigrate
+    entrypoint: "migrate -database postgresql://user:pgpwd4@db/appDB?sslmode=disable -path /tmp/migrations"
+    command: "down 1"
+
+networks:
+  app-network:
+volumes:
+  postgres_data:

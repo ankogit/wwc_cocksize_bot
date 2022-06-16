@@ -6,11 +6,11 @@ import (
 
 type dataResponse struct {
 	Data  interface{} `json:"data"`
-	Count int64       `json:"count"`
+	Count int         `json:"count"`
 }
 type DataResponse struct {
 	Data  interface{} `json:"data"`
-	Count int64       `json:"count"`
+	Count int         `json:"count"`
 }
 
 type idResponse struct {

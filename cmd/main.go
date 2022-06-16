@@ -3,8 +3,10 @@ package main
 import (
 	"context"
 	"errors"
+	"fmt"
 	"github.com/asdine/storm/v3"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	_ "github.com/lib/pq"
 	"github.com/robfig/cron/v3"
 	"local/wwc_cocksize_bot/configs"
 	"local/wwc_cocksize_bot/pkg/auth"
@@ -12,6 +14,7 @@ import (
 	"local/wwc_cocksize_bot/pkg/server/handler"
 	"local/wwc_cocksize_bot/pkg/service"
 	"local/wwc_cocksize_bot/pkg/storage"
+	"local/wwc_cocksize_bot/pkg/storage/postgresDB"
 	"local/wwc_cocksize_bot/pkg/storage/stormDB"
 	"local/wwc_cocksize_bot/pkg/telegram"
 	"log"
@@ -35,12 +38,26 @@ func main() {
 	db, err := storm.Open(config.GetStringKey("", "dbName"))
 	defer db.Close()
 
+	dbPostgres, err := postgresDB.NewPostgresDB(postgresDB.Config{
+		Host:     "db",
+		Port:     "5432",
+		Username: "user",
+		Password: "pgpwd4",
+		DBName:   "appDB",
+		SSLMode:  "disable",
+	})
+	if err != nil {
+		log.Fatal(fmt.Sprintf("cant to connect postgress: %s", err))
+		return
+	}
+	defer dbPostgres.Close()
+
 	userRepository := stormDB.NewUserRepository(db)
 	chatRepository := stormDB.NewChatRepository(db)
 
-	repositories := storage.NewRepositories(db)
+	repositories := storage.NewRepositories(db, dbPostgres)
 
-	tokenManager, err := auth.NewManager("secretKey")
+	tokenManager, err := auth.NewManager(cfg.AuthSecret)
 	if err != nil {
 		log.Fatal(err)
 		return

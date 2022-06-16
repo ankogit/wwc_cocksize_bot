@@ -3,12 +3,13 @@ package service
 import (
 	"context"
 	"local/wwc_cocksize_bot/pkg/auth"
+	"local/wwc_cocksize_bot/pkg/models"
 	"local/wwc_cocksize_bot/pkg/storage"
 )
 
 type Users interface {
-	Login(ctx context.Context, input LoginInput) (Tokens, error)
-	RefreshToken(ctx context.Context, input RefreshInput) (Tokens, error)
+	Login(ctx context.Context, input LoginInput) (models.Session, error)
+	RefreshToken(ctx context.Context, input RefreshInput) (models.Session, error)
 }
 
 type LoginInput struct {
@@ -17,11 +18,6 @@ type LoginInput struct {
 
 type RefreshInput struct {
 	Token string
-}
-
-type Tokens struct {
-	AccessToken  string
-	RefreshToken string
 }
 
 type Services struct {
@@ -35,7 +31,7 @@ type Deps struct {
 }
 
 func NewServices(deps Deps) *Services {
-	usersService := NewUsersService(deps.Repositories.Users, deps.TokenManager)
+	usersService := NewUsersService(deps.Repositories.Users, deps.Repositories.RefreshTokens, deps.TokenManager)
 
 	return &Services{
 		Users:        usersService,
