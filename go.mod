@@ -3,8 +3,8 @@ module local/wwc_cocksize_bot
 go 1.17
 
 require (
+	github.com/Masterminds/squirrel v1.5.3
 	github.com/asdine/storm/v3 v3.2.1
-	github.com/boltdb/bolt v1.3.1
 	github.com/gin-gonic/gin v1.7.7
 	github.com/go-ini/ini v1.66.4
 	github.com/go-playground/validator/v10 v10.10.1
@@ -20,8 +20,9 @@ require (
 )
 
 require (
-	github.com/Masterminds/squirrel v1.5.3 // indirect
+	github.com/boltdb/bolt v1.3.1 // indirect
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
+	github.com/gin-contrib/cors v1.3.1 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-playground/locales v0.14.0 // indirect
 	github.com/go-playground/universal-translator v0.18.0 // indirect
