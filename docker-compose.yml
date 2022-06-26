@@ -12,6 +12,13 @@ services:
     networks:
       - app-network
 
+#  protogen:
+#    build:
+#      context: ./
+#      dockerfile: ./DockerfileProtoGen
+#    volumes:
+#      - /var/data:/var/data
+
   db:
     image: postgres:13.3
     environment:

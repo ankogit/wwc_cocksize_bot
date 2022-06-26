@@ -54,7 +54,17 @@ type Config struct {
 	AuthSecret string
 	Version    string `mapstructure:"version"`
 	Port       string `mapstructure:"port"`
+	DB         DB
 	Messages   Messages
+}
+
+type DB struct {
+	Host     string `mapstructure:"host"`
+	Port     string `mapstructure:"port"`
+	Username string `mapstructure:"username"`
+	Password string `mapstructure:"password"`
+	DBName   string `mapstructure:"db_name"`
+	SSLMode  string `mapstructure:"ssl_mode"`
 }
 
 type Messages struct {

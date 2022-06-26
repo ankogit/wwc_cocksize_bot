@@ -4,8 +4,8 @@ import (
 	"errors"
 	"github.com/gin-gonic/gin"
 	"local/wwc_cocksize_bot/pkg/models"
-	"local/wwc_cocksize_bot/pkg/server/handler/response"
 	"local/wwc_cocksize_bot/pkg/service"
+	"local/wwc_cocksize_bot/pkg/transport/rest/handler/response"
 	"net/http"
 	"strconv"
 )

@@ -8,15 +8,18 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	_ "github.com/lib/pq"
 	"github.com/robfig/cron/v3"
+	"github.com/sirupsen/logrus"
 	"local/wwc_cocksize_bot/configs"
 	"local/wwc_cocksize_bot/pkg/auth"
-	"local/wwc_cocksize_bot/pkg/server"
-	"local/wwc_cocksize_bot/pkg/server/handler"
 	"local/wwc_cocksize_bot/pkg/service"
 	"local/wwc_cocksize_bot/pkg/storage"
 	"local/wwc_cocksize_bot/pkg/storage/postgresDB"
 	"local/wwc_cocksize_bot/pkg/storage/stormDB"
 	"local/wwc_cocksize_bot/pkg/telegram"
+	"local/wwc_cocksize_bot/pkg/transport/grpc"
+	grpc_handler "local/wwc_cocksize_bot/pkg/transport/grpc/handler"
+	"local/wwc_cocksize_bot/pkg/transport/rest"
+	"local/wwc_cocksize_bot/pkg/transport/rest/handler"
 	"log"
 	"net/http"
 	"os"
@@ -39,12 +42,12 @@ func main() {
 	defer db.Close()
 
 	dbPostgres, err := postgresDB.NewPostgresDB(postgresDB.Config{
-		Host:     "db",
-		Port:     "5432",
-		Username: "user",
-		Password: "pgpwd4",
-		DBName:   "appDB",
-		SSLMode:  "disable",
+		Host:     cfg.DB.Host,
+		Port:     cfg.DB.Port,
+		Username: cfg.DB.Username,
+		Password: cfg.DB.Password,
+		DBName:   cfg.DB.DBName,
+		SSLMode:  cfg.DB.SSLMode,
 	})
 	if err != nil {
 		log.Fatal(fmt.Sprintf("cant to connect postgress: %s", err))
@@ -99,11 +102,26 @@ func main() {
 		}
 	}()
 
-	serverInstance := new(server.Server)
+	serverInstance := new(rest.Server)
 	handlers := handler.NewHandler(services)
 
 	go func() {
 		if err := serverInstance.RunHttp(cfg.Port, handlers.InitRoutes()); !errors.Is(err, http.ErrServerClosed) {
+			log.Fatalf("error http server: %s", err.Error())
+		}
+	}()
+
+	grpcHandlers := grpc_handler.NewGrpcHandler(services)
+	grpcHandlers.InitHandlers()
+
+	logger := logrus.New()
+	grpcInstance := grpc.NewServer(grpc.Deps{
+		Logger:       logger,
+		StatsHandler: &grpcHandlers.StatsHandler,
+	})
+	go func() {
+		log.Println("Starting gRPC server")
+		if err := grpcInstance.ListenAndServe(1337); err != nil {
 			log.Fatalf("error http server: %s", err.Error())
 		}
 	}()

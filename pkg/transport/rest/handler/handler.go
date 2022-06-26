@@ -3,8 +3,8 @@ package handler
 import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"local/wwc_cocksize_bot/pkg/server/handler/middleware"
 	"local/wwc_cocksize_bot/pkg/service"
+	"local/wwc_cocksize_bot/pkg/transport/rest/handler/middleware"
 	"time"
 )
 

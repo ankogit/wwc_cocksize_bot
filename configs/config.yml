@@ -1,6 +1,13 @@
-version: "0.5.9"
+version: "0.6.0"
 
 port: 1488
+db:
+  host: "localhost"
+  port: "54320"
+  username: "user"
+  password: "pgpwd4"
+  db_name: "appDB"
+  ssl_mode: "disable"
 
 messages:
   responses:

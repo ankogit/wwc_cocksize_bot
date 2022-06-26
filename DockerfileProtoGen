@@ -1,0 +1,26 @@
+FROM golang:1.17.6
+
+
+WORKDIR /app
+
+RUN apt-get update
+RUN apt install -y protobuf-compiler
+
+RUN GO111MODULE=on \
+        go get google.golang.org/protobuf/cmd/protoc-gen-go@v1.25.0 \
+        google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.1.0
+
+# export is redundant here `/go/bin` is already in `golang` image's path
+# (and actual any env change here is lost once the command completes)
+RUN export PATH="$PATH:$(go env GOPATH)/bin"
+
+RUN mkdir /api
+
+
+#RUN protoc --proto_path=proto proto/stats.proto \
+#    		--grpc-gateway_out=logtostderr=true:api  \
+#    		--openapiv2_out=logtostderr=true:./docs \
+#    		--go_out=:api --experimental_allow_proto3_optional \
+#    		--go-grpc_out=:api
+
+RUN protoc -I proto --go_out=plugins=grpc:api proto/*.proto

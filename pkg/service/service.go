@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"github.com/sirupsen/logrus"
 	"local/wwc_cocksize_bot/pkg/auth"
 	"local/wwc_cocksize_bot/pkg/models"
 	"local/wwc_cocksize_bot/pkg/storage"
@@ -28,6 +29,7 @@ type Services struct {
 type Deps struct {
 	Repositories *storage.Repositories
 	TokenManager auth.TokenManager
+	Logger       *logrus.Logger
 }
 
 func NewServices(deps Deps) *Services {

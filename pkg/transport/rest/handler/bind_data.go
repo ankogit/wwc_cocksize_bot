@@ -2,7 +2,7 @@ package handler
 
 import (
 	"fmt"
-	"local/wwc_cocksize_bot/pkg/server/handler/response"
+	"local/wwc_cocksize_bot/pkg/transport/rest/handler/response"
 	"log"
 	"net/http"
 
