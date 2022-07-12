@@ -1,5 +1,5 @@
 # Используем базовый образ для Go
-FROM golang:1.17.6
+FROM golang:1.17.6-alpine
 
 # Создадим директорию
 RUN mkdir /app
