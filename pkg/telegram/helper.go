@@ -3,6 +3,7 @@ package telegram
 import (
 	"fmt"
 	"github.com/m7shapan/njson"
+	"github.com/yookoala/realpath"
 	"io/ioutil"
 	"local/wwc_cocksize_bot/pkg/models"
 	"math"
@@ -10,6 +11,7 @@ import (
 	"net/http"
 	"sort"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -64,6 +66,29 @@ func getNewCockSizeV2(userId int64) int {
 	}
 
 	return result
+}
+
+func getNewCockSizeV3() int {
+	rand.Seed(time.Now().UnixNano())
+	floatRandValue := rand.Float64()
+
+	curWeather := getWeather()
+
+	temperature := float64(curWeather.Temperature.TemperatureFeelsLike)
+	temperature = temperature / 10
+	intTemperature := int(math.Round(temperature))
+
+	cockSizesArray, err := getCockSizeFromFile()
+	if err != nil {
+		panic(err)
+	}
+
+	for _, data := range cockSizesArray {
+		if data.from <= floatRandValue && floatRandValue <= data.to {
+			return intTemperature + data.cockSize
+		}
+	}
+	return intTemperature
 }
 
 func test(x float64, temp float64) float64 {
@@ -152,4 +177,42 @@ func getWeather() models.WeatherResponse {
 	//	log.Fatal("ooopsss! an error occurred, please try again", err)
 	//}
 	return weatherResponse
+}
+
+func getCockSizeFromFile() ([]cockSizesData, error) {
+	fmt.Println(realpath.Realpath("./configs/sizes.txt"))
+
+	fileData, err := ioutil.ReadFile("./configs/sizes.txt")
+	if err != nil {
+		return nil, err
+	}
+	stringFileData := string(fileData)
+	stringsData := strings.Split(stringFileData, "\n")
+
+	var cockSizesArray []cockSizesData
+	for _, s := range stringsData {
+		items := strings.Split(s, "\t")
+		cockSize, err := strconv.ParseInt(items[0], 10, 8)
+		items[1] = strings.Replace(items[1], ",", ".", -1)
+		items[2] = strings.Replace(items[2], ",", ".", -1)
+		from, err := strconv.ParseFloat(items[1], 10)
+		to, err := strconv.ParseFloat(items[2], 10)
+		if err != nil {
+			return nil, err
+		}
+		cockSizesArray = append(cockSizesArray, cockSizesData{
+			cockSize: int(cockSize),
+			from:     from,
+			to:       to,
+			emoji:    items[3],
+		})
+	}
+	return cockSizesArray, nil
+}
+
+type cockSizesData struct {
+	cockSize int
+	from     float64
+	to       float64
+	emoji    string
 }

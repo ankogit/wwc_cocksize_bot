@@ -1,9 +1,9 @@
-version: "0.6.0"
+version: "0.6.1"
 
 port: 1488
 db:
-  host: "localhost"
-  port: "54320"
+  host: "db"
+  port: "5432"
   username: "user"
   password: "pgpwd4"
   db_name: "appDB"

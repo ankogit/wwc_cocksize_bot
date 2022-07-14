@@ -19,7 +19,7 @@ func (b *Bot) handleInlineQuery(query *tgbotapi.InlineQuery) {
 	if val, _ := b.userRepository.Get(query.From.ID); val.ID != 0 {
 		user = val
 		if user.Time.Add(time.Hour * 8).Before(time.Now()) {
-			user.CockSize = getNewCockSizeV2(query.From.ID)
+			user.CockSize = getNewCockSizeV3()
 			user.Time = time.Now()
 			user.Username = query.From.UserName
 			user.FirstName = query.From.FirstName
@@ -30,7 +30,7 @@ func (b *Bot) handleInlineQuery(query *tgbotapi.InlineQuery) {
 			}
 		}
 	} else {
-		user = models.UserData{ID: query.From.ID, Username: query.From.UserName, FirstName: query.From.FirstName, LastName: query.From.LastName, CockSize: getNewCockSizeV2(query.From.ID), Time: time.Now()}
+		user = models.UserData{ID: query.From.ID, Username: query.From.UserName, FirstName: query.From.FirstName, LastName: query.From.LastName, CockSize: getNewCockSizeV3(), Time: time.Now()}
 		err := b.userRepository.Save(user)
 		if err != nil {
 			log.Panic(err)

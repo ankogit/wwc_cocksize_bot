@@ -51,6 +51,7 @@ require (
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.0 // indirect
 	github.com/ugorji/go/codec v1.2.7 // indirect
+	github.com/yookoala/realpath v1.0.0 // indirect
 	go.etcd.io/bbolt v1.3.4 // indirect
 	golang.org/x/crypto v0.0.0-20220321153916-2c7772ba3064 // indirect
 	golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2 // indirect

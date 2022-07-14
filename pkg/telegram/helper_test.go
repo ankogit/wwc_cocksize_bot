@@ -69,3 +69,16 @@ func TestGetNewCockSizeV2(t *testing.T) {
 	//
 	//}
 }
+
+func TestGetNewCockSizeV3(t *testing.T) {
+
+	//fmt.Println(1111111111)
+	fmt.Println(getNewCockSizeV3())
+
+	//fmt.Println(getNewCockSizeV2(439782918))
+
+	//for i := 10; i < 20; i++ {
+	//	fmt.Println(getNewCockSizeV2(i))
+	//
+	//}
+}
