@@ -1,6 +1,7 @@
 version: "0.6.1"
 
 port: 1488
+port-grpc: 14880
 db:
   host: "db"
   port: "5432"

@@ -121,7 +121,7 @@ func main() {
 	})
 	go func() {
 		log.Println("Starting gRPC server")
-		if err := grpcInstance.ListenAndServe(1337); err != nil {
+		if err := grpcInstance.ListenAndServe(cfg.PortGrpc); err != nil {
 			log.Fatalf("error http server: %s", err.Error())
 		}
 	}()

@@ -4,6 +4,7 @@ services:
     build: .
     ports:
       - "1488:1488"
+      - "14880:14880"
     volumes:
       - ./bot.db:/app/bot.db
       - /var/data:/var/data

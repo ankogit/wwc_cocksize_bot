@@ -54,6 +54,7 @@ type Config struct {
 	AuthSecret string
 	Version    string `mapstructure:"version"`
 	Port       string `mapstructure:"port"`
+	PortGrpc   int    `mapstructure:"port-grpc"`
 	DB         DB
 	Messages   Messages
 }
